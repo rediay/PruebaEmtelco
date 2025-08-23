@@ -78,13 +78,13 @@ export default function HomeScreen() {
               <Text style={styles.price}>Precio: ${price}</Text>
               <View style={styles.buttonRow}>
                     <TouchableOpacity 
-                        style={styles.button}
+                        style={styles.buttonDetail}
                         onPress={() => navigation.navigate('PokemonDetail', { name: item.name, id })}
                     >
                         <Text style={styles.buttonText}>Detalles</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Comprar</Text>
+                    <TouchableOpacity style={styles.buttonBuy}>
+                        <Text style={styles.buttonText}>Agregar</Text>
                     </TouchableOpacity>                    
                 </View>
             </View>
@@ -157,8 +157,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 8,
   },
-button: {
-  backgroundColor: '#007bff',
+buttonDetail: {
+  backgroundColor: '#287fa7ff',
+  paddingVertical: 8,
+  paddingHorizontal: 16,
+  borderRadius: 5,
+  marginHorizontal: 4,
+},
+buttonBuy: {
+  backgroundColor: '#28a745',
   paddingVertical: 8,
   paddingHorizontal: 16,
   borderRadius: 5,
