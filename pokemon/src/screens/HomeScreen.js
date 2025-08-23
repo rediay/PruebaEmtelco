@@ -1,9 +1,11 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
-
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+
+import { getPokemonList } from '../services/api';
 
 export default function HomeScreen() {
   const [pokemon, setPokemon] = useState([]);
@@ -12,12 +14,14 @@ export default function HomeScreen() {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const PAGE_SIZE = 20;
+  const navigation = useNavigation();
 
   const fetchPokemon = async () => {
     if (loading || !hasMore) return;
     setLoading(true);
     try {
       const offset = page * PAGE_SIZE;
+      const response2 = await getPokemonList(PAGE_SIZE, offset);      
       const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=${PAGE_SIZE}&offset=${offset}`);
       let newResults = response.data.results;
       // Ordenar por nombre
@@ -61,7 +65,7 @@ export default function HomeScreen() {
           // Extraer el ID del Pokémon desde la URL
           const id = item.url.split('/').filter(Boolean).pop();
           const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-          const price = Math.floor(Math.random() * 1000) + 100;
+          const price = 1000;//Math.floor(Math.random() * 1000) + 100;
           return (
             <View style={styles.item}>
               <View style={styles.row}>
@@ -73,7 +77,10 @@ export default function HomeScreen() {
               </View>
               <Text style={styles.price}>Precio: ${price}</Text>
               <View style={styles.buttonRow}>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity 
+                        style={styles.button}
+                        onPress={() => navigation.navigate('PokemonDetail', { name: item.name, id })}
+                    >
                         <Text style={styles.buttonText}>Detalles</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.button}>
