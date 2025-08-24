@@ -15,6 +15,11 @@ export default function HomeScreen() {
   const [hasMore, setHasMore] = useState(true);
   const PAGE_SIZE = 20;
   const navigation = useNavigation();
+  const [cart, setCart] = useState([]);
+
+  const handleAddToCart = (pokemon) => {
+  setCart(prevCart => [...prevCart, pokemon]);
+    };
 
   const fetchPokemon = async () => {
     if (loading || !hasMore) return;
@@ -66,6 +71,7 @@ export default function HomeScreen() {
           const id = item.url.split('/').filter(Boolean).pop();
           const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
           const price = 1000;//Math.floor(Math.random() * 1000) + 100;
+          const isInCart = cart.some(p => p.id === id);
           return (
             <View style={styles.item}>
               <View style={styles.row}>
@@ -83,8 +89,13 @@ export default function HomeScreen() {
                     >
                         <Text style={styles.buttonText}>Detalles</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonBuy}>
-                        <Text style={styles.buttonText}>Agregar</Text>
+                    <TouchableOpacity style={styles.buttonBuy}                    
+                        onPress={() => handleAddToCart({ name: item.name, id, price })}
+                        disabled={isInCart}
+                    >
+                        <Text style={styles.buttonText}>
+                            {isInCart ? '(En el carrito)' : 'Comprar'}
+                        </Text>
                     </TouchableOpacity>                    
                 </View>
             </View>
@@ -93,7 +104,14 @@ export default function HomeScreen() {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={loading ? <ActivityIndicator size="small" color="#007bff" /> : null}
+        
       />
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => navigation.navigate('Cart', { cart })}
+      >
+        <Text style={styles.fabText}>🛒</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -174,5 +192,24 @@ buttonBuy: {
 buttonText: {
   color: '#fff',
   fontWeight: 'bold',
+},fab: {
+  position: 'absolute',
+  right: 24,
+  bottom: 24,
+  backgroundColor: '#287fa7',
+  width: 60,
+  height: 60,
+  borderRadius: 30,
+  justifyContent: 'center',
+  alignItems: 'center',
+  elevation: 5,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.3,
+  shadowRadius: 4,
+},
+fabText: {
+  color: '#fff',
+  fontSize: 28,
 },
 });
