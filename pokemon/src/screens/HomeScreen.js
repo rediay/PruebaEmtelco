@@ -1,11 +1,12 @@
 
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
-import { useState, useEffect } from 'react';
+
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, Image, TouchableOpacity, Alert } from 'react-native';
+import { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 
 import { getPokemonList } from '../services/api';
+import { CartContext } from '../context/CartContext';
 
 export default function HomeScreen() {
   const [pokemon, setPokemon] = useState([]);
@@ -15,11 +16,16 @@ export default function HomeScreen() {
   const [hasMore, setHasMore] = useState(true);
   const PAGE_SIZE = 20;
   const navigation = useNavigation();
-  const [cart, setCart] = useState([]);
+  const { cart, setCart } = useContext(CartContext);
 
   const handleAddToCart = (pokemon) => {
-  setCart(prevCart => [...prevCart, pokemon]);
-    };
+    setCart(prevCart => [...prevCart, pokemon]);
+    Alert.alert(
+        '✅ ¡Agregado!',
+        `${pokemon.name} ha sido agregado al carrito.`,
+        [{ text: 'OK', style: 'default' }]
+    );
+  };
 
   const fetchPokemon = async () => {
     if (loading || !hasMore) return;
@@ -72,6 +78,7 @@ export default function HomeScreen() {
           const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
           const price = 1000;//Math.floor(Math.random() * 1000) + 100;
           const isInCart = cart.some(p => p.id === id);
+          
           return (
             <View style={styles.item}>
               <View style={styles.row}>
@@ -89,7 +96,8 @@ export default function HomeScreen() {
                     >
                         <Text style={styles.buttonText}>Detalles</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonBuy}                    
+                    <TouchableOpacity  
+                        style={[styles.buttonBuy, isInCart && styles.buttonDisabled]}                
                         onPress={() => handleAddToCart({ name: item.name, id, price })}
                         disabled={isInCart}
                     >
@@ -108,7 +116,7 @@ export default function HomeScreen() {
       />
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => navigation.navigate('Cart', { cart })}
+        onPress={() => navigation.navigate('Cart')}
       >
         <Text style={styles.fabText}>🛒</Text>
       </TouchableOpacity>
@@ -211,5 +219,8 @@ buttonText: {
 fabText: {
   color: '#fff',
   fontSize: 28,
+},
+buttonDisabled: {
+  backgroundColor: '#ccc',
 },
 });
