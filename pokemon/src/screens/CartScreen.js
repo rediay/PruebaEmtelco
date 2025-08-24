@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Image, Vibration } from 'react-native';
 import { CartContext } from '../context/CartContext';
 
 export default function CartScreen() {
@@ -12,7 +12,10 @@ export default function CartScreen() {
       `¿Estás seguro que deseas eliminar ${name} del carrito?`,
       [
         { text: 'Cancelar', style: 'cancel' },
-        { text: 'Eliminar', style: 'destructive', onPress: () => setCart(prevCart => prevCart.filter(item => item.id !== id)) }
+        { text: 'Eliminar', style: 'destructive', onPress: () => {
+          Vibration.vibrate(100); // vibra por 100ms
+          setCart(prevCart => prevCart.filter(item => item.id !== id));
+        } },
       ]
     );
   };

@@ -1,6 +1,6 @@
 
 
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, Image, TouchableOpacity, Alert, Vibration } from 'react-native';
 import { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
@@ -20,6 +20,7 @@ export default function HomeScreen() {
 
   const handleAddToCart = (pokemon) => {
     setCart(prevCart => [...prevCart, pokemon]);
+    Vibration.vibrate(100); // vibra por 100ms
     Alert.alert(
         '✅ ¡Agregado!',
         `${pokemon.name} ha sido agregado al carrito.`,
